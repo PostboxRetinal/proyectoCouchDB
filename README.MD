@@ -5,9 +5,7 @@ Durante el semestre se desarrollará un sistema de recomendación de cursos y tu
 
 # Enunciado
 
-Se pide diseñar e implementar una base de datos llave/valor en CouchDB con el fin de construir un sistema de recomendación de cursos. El sistema debe ser capaz de proporcionar recomendaciones personalizadas de cursos y tutores con base en las preferencias de los usuarios y las calificaciones de cursos y tutores, en algún momento. 
-
-**En** esta entrega se deben diseñar e implementar las colecciones y un adelanto del CRUD con las operaciones especificadas en las instrucciones.
+En esta entrega se deben diseñar e implementar las colecciones y un adelanto del CRUD con las operaciones especificadas en las instrucciones.
 
 Los objetivos de esta actividad evaluativa, la cual se realizará por entregas, son los siguientes:
 
@@ -23,9 +21,12 @@ Los objetivos de esta actividad evaluativa, la cual se realizará por entregas, 
 
 Diseña e implementa un modelo de datos con colecciones de Usuarios (aprendices), Cursos y Tutores. 
 
-    Cada documento de cada colección debe tener las propiedades relevantes y deben implementarse de igual forma las relaciones pertinentes:
+Cada documento de cada colección debe tener las propiedades relevantes y deben implementarse de igual forma las relaciones pertinentes:
 
-            - Colecciones: Usuarios (o aprendiz), Tutores, Cursos
+## Colecciones
+- Usuarios (o aprendiz)
+- Tutores
+- Cursos
 ## Atributos
 
 ### Usuario

@@ -1,0 +1,36 @@
+{
+    "_id": "_design/curso",
+    "_rev": "5-4f02efb94b3793b954359103e7659360",
+    "views": {
+      "porId": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.id)  { emit(doc.id, doc); } }"
+      },
+      "porNombre": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.nombre)  { emit(doc.nombre, doc); } }"
+      },
+      "esCertificable": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.certificado)  { emit(doc.certificado, doc); } }"
+      },
+      "porDuracion": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.duracion)  { emit(doc.duracion, doc); } }"
+      },
+      "porCategoria": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.categoria)  { emit(doc.categoria, doc); } }"
+      },
+      "porCalificacion": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.calPromedio)  { emit(doc.calPromedio, doc); } }"
+      },
+      "porModalidad": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.modalidad)  { emit(doc.modalidad, doc); } }"
+      },
+      "esGratuito": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.gratuito)  { emit(doc.gratuito, doc); } }"
+      },
+      "porPrecio": {
+        "map": "function (doc) { if (doc.tipo === 'Curso' && doc.precio)  { emit(doc.precio, doc); } }"
+      }
+      
+    },
+    "language": "javascript"
+  }
+  

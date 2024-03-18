@@ -3,7 +3,7 @@
 
 #IMPORTS
 import couchdb
-import subprocess,time
+import subprocess,time,os,sys,json
 
 #CODIGOS DE ERROR
     #1 SIN ERROR
@@ -19,12 +19,29 @@ db_name = "cli_recommendation" #NOMBRE DOC BBDD
 #CONEXION BBDD
 couch_server = couchdb.Server(f"http://{user}:{pwd}@{host}:{port}/")
 
+def detectarArquitectura():
+    '''Se encarga de usar la libreria os para detectar que SO corre actualmente
+    none -> (str)'''
+
+    if os.name == 'nt':
+        return('Windows')
+    elif os.name == 'posix':
+        return ('Linux')
+    else:
+        return('Desconocido')
+
 #MODULOS / CRUD OPs
-def limpiarPantalla():
+def limpiarPantalla(aarch):
     '''Esta función se encarga de limpiar la pantalla con el  módulo subprocess 
     (none) -> (none)'''
-    time.sleep(1.5)
-    subprocess.run('clear',shell=True)
+    #Si es Windows
+    if aarch == 'Windows':
+        limpiar = 'cls'
+    #Si es Linux
+    elif aarch == 'Linux':
+        limpiar = 'clear'
+    time.sleep(0.8)
+    subprocess.run(limpiar,shell=True)
 
 def validar_guardado(doc_id):
     if doc_id in db:
@@ -33,10 +50,24 @@ def validar_guardado(doc_id):
         print(f"El documento con ID: {doc_id} no se ha guardado correctamente en la BBDD")
 
 def query(tipo,llave,valor):
-    '''Función encargada de hacer querys requeridos con ayuda de 3 parámetros'''
-    design_doc = f"_design/{tipo}"
-    view_name = f"buscar_por_{llave}"
-    resultados = db.view(f"{tipo}/{view_name}",key=valor)
+    '''Función encargada de hacer querys requeridos con ayuda de 3 parámetros y validar según se requiera'''
+    try:
+        documentoDisenno = f"_design/{tipo}"
+        nombreVista = f"por_{llave}"
+        db[documentoDisenno]
+        try:
+            resultados = db.view(f"{tipo}/{nombreVista}",key=valor)
+            return (row.value for row in resultados)
+        except couchdb.http.ResourceNotFound:
+            return(f'ERROR: La vista {resultados} no es válida, intenta con otro valor')
+    except couchdb.ResourceNotFound:
+        return(f'ERROR: Docuemnto no encontrado')
+
+def esperarUsuario():
+    '''Input que hace de validacion
+    (none) -> (none)'''
+
+    input('\nPresiona enter para continuar')
 
 def consultarUsuario(nombre):
     '''Función encargada de consultar en la BBDD filtrando por usuarios
@@ -111,7 +142,7 @@ def menuRol(opc):
         tipo = "Curso"
         id = input("Ingrese el ID del curso: ")
         nombre = input("Ingrese el nombre del curso: ")
-        categoria = int(input("\n\n--- CATEGORIAS DIPONIBLES ---\n\n1. Artes y humanidades\n2. Ciencias básicas\n3. Tecnología\n\nSeleccione una opción: "))
+        categoria = int(input("\n\n--- CATEGORIAS DISPONIBLES ---\n\n1. Artes y humanidades\n2. Ciencias básicas\n3. Tecnología\n\nSeleccione una opción: "))
 
         if categoria == 1:
             categoria = "Artes y humanidades"
@@ -121,17 +152,18 @@ def menuRol(opc):
             categoria = "Tecnología"
         else:
             print('Opción incorrecta. Intenta nuevamente')
-            
+            categoria = int(input("\n\n--- CATEGORIAS DIPONIBLES ---\n\n1. Artes y humanidades\n2. Ciencias básicas\n3. Tecnología\n\nSeleccione una opción: "))
+
         modalidad = int(input("\n\n--- MODALIDADES ---\n\n1. Presencial\n2. Remoto\n\nSeleccione una opción: "))
-        if categoria == 1:
-            categoria = "Presencial"
-        elif categoria == 2:
-            categoria = "Remoto"
+        if modalidad == 1:
+            modalidad = "Presencial"
+        elif modalidad == 2:
+            modalidad = "Remoto"
         else:
             print('Opción incorrecta. Intenta nuevamente')
             modalidad = int(input("\n\n--- MODALIDADES ---\n\n1. Presencial\n2. Remoto\n\nSeleccione una opción: "))
 
-        gratuito = int(input("¿Es el curso gratuito?\n\n1. Verdadero\n2. Falso)\n\nSeleccione una opción: "))
+        gratuito = int(input("\n¿Es el curso gratuito?\n\n1. Verdadero\n2. Falso\n\nSeleccione una opción: "))
 
         if gratuito == 1:
             gratuito = True
@@ -139,18 +171,27 @@ def menuRol(opc):
             gratuito = False
         else:
             print('Opción incorrecta. Intenta nuevamente')
+            gratuito = int(input("¿Es el curso gratuito?\n\n1. Verdadero\n2. Falso\n\nSeleccione una opción: "))
+        
+        #Si el curso es gratuito, su precio es 0, no?
+        if gratuito == False:
+            precio = float(input("\nIngrese el precio del curso: "))
+        else:
+            precio = 0
 
-        precio = float(input("Ingrese el precio del curso: "))
-        duracion = int(input("Ingrese la duración del curso (en horas): "))
-        certificado = int(input("¿El curso tiene certificado?\n\n1. Verdadero\n2. Falso)\n\nSeleccione una opción: "))
+        duracion = int(input("\nIngrese la duración del curso (en horas): "))
+        certificado = int(input("\n¿El curso tiene certificado?\n\n1. Verdadero\n2. Falso\n\nSeleccione una opción: "))
+
         if certificado == 1:
             certificado = True
         elif certificado == 2:
             certificado = False
         else:
             print('Opción incorrecta. Intenta nuevamente')
+            certificado = int(input("¿El curso tiene certificado?\n\n1. Verdadero\n2. Falso)\n\nSeleccione una opción: "))
 
-        calPromedio = float(input("Ingrese la calificación promedio del curso (0.0 a 5.0): "))
+
+        calPromedio = float(input("\nIngrese la calificación promedio del curso (0.0 a 5.0): "))
 
         curso = {
             "tipo":tipo,
@@ -158,22 +199,22 @@ def menuRol(opc):
             "nombre":nombre,
             "categoria":categoria,
             "modalidad":modalidad,
-            "gratuito":gratuito,
+            "esGratuito":gratuito,
             "precio":precio,
             "duracion":duracion,  
-            "certificado":certificado,
+            "esCertificable":certificado,
             "calPromedio":calPromedio
         }
 
         db.save(curso)
         validar_guardado(curso["_id"]) 
 
-def menu(nombre_user):
+def menu(nombre_user,aarch):
     '''Función encargada de ejecutar la funcionalidad completa de la app
     (none) -> (none)'''
     while True:
-        limpiarPantalla()
-        opcion = int(input(f"Holaaa {nombre_user}\n\n1.Creación\n2.Consulta por nombre\n3.Salir\n\nDigita una opción: "))
+        limpiarPantalla(aarch)
+        opcion = int(input(f"\n\n\|..-Corriendo desde SO {aarch}-..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Salir\n\nDigita una opción: "))
         
         #Creación de objetos
         if (opcion == 1):
@@ -195,22 +236,63 @@ def menu(nombre_user):
         
         #Validacionees y consultas
         elif (opcion == 2):
-            opc1 = int(input("Validación por nombre: \n1. Consultar Alumno\n2. Consultar Docente\n\nValidación por modalidad:\n 3. Consultar curso\n\nDigita una opción: "))
+            opc1 = int(input("Validaciones disponibles \n1. Consultar Aprendiz\n2. Consultar Docente\n 3. Consultar curso\n\nDigita una opción: "))
             
             if (opc1 == 1):
-                res = consultarUsuario(input('Consultar nombre del aprendiz: '))
-                print(res)
-                pass
+                tipo = "aprendiz"
+                parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
+                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+                res = query(tipo, parametro, valorParametro)
+                total = 0
+                if res is None:
+                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+                else:
+                    try:
+                        for x in res:
+                            if x.strip():
+                                datos = json.loads(x)
+                                print(datos)
+                            total =+ 1
+                        sys.stdout.write(f'Datos encontrados: {total}')
+                        esperarUsuario()
+                    except json.JSONDecodeError:
+                        print(f'ERROR: Formato JSON inválido')
 
             elif (opc1 == 2):
-                res = consultarTutor(input('Consultar nombre del tutor: '))
-                print(res)
-                pass
+                tipo = "tutor"
+                parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
+                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+                res = query(tipo, parametro, valorParametro)
+                total = 0
+                if res is None:
+                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+                else:
+                    try:
+                        for x in res:
+                            if x.strip():
+                                datos = json.loads(x)
+                                print(datos)
+                            total =+ 1
+                        sys.stdout.write(f'Datos encontrados: {total}')
+                        esperarUsuario()
+                    except json.JSONDecodeError:
+                        print(f'ERROR: Formato JSON inválido')
 
             elif (opc1 == 3):
-                res = consultarCurso(input('Consultar modalidad del curso: ')).lower()
-                print(res)
-                pass
+                tipo = "curso"
+                parametro = input("Digite el parámetro de búsqueda\n- id\n- Nombre\n- Categoria\n - Modalidad\n- esGratuito\n- \n- esCertificable\n- Precio \n- Duracion \n- Calificación")
+                if parametro != 'esGratuito' or 'esCertificable':
+                    parametro.lower()
+                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+                res = query(tipo, parametro, valorParametro)
+                if res is None:
+                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+                else:
+                    for x in res:
+                        print(x)
+                        cantidad =+ 1
+                    sys.stdout.write(f'Datos encontrados: {cantidad}')
+                    esperarUsuario()
 
             elif (opc1 == 4):
                 # Retorna arriba
@@ -233,7 +315,7 @@ time.sleep(1)
 try:
     couch_server.login(user,pwd)
     if (db_name in couch_server):
-        print(f'BBDD {db_name} encontrada')
+        print(f'\nBBDD {db_name} encontrada')
         db = couch_server[db_name]
 except couchdb.Unauthorized:
     print('Usuario o Clave Incorrectas. Intenta nuevamente')
@@ -242,22 +324,23 @@ except:
     print(f'No se encontró la base de datos {db_name}, será creada')
     db = couch_server.create(db_name)
 
-
-def ejecucion(nombre):
+def main(aarch):
     '''Llama los módulos requeridos para la ejecución del programa
-    (str) -> (none)'''
+    (none) -> (none)'''
     try:
-        menu(nombre)
+        nombre_user = input('BIENVENIDO\nIngresa tu nombre: ')
+        menu(nombre_user,aarch)
     except KeyboardInterrupt:
         salida = input('\n¿Deseas salir de la aplicación? (S/N): ').lower()
         if salida == 's':
             exit(0)
         else:
-            ejecucion()
-            
+            menu(nombre_user,aarch)
+
 #EJECUCION
-nombre_user = input('BIENVENIDO\nIngresa tu nombre: ')
-ejecucion(nombre_user)
+if __name__ == '__main__':
+    aarch = detectarArquitectura()
+    main(aarch)
     
 
 

@@ -62,6 +62,7 @@ def query(tipo,llave,valor):
             return(f'ERROR: La vista {resultados} no es válida, intenta con otro valor')
     except couchdb.ResourceNotFound:
         return(f'ERROR: Docuemnto no encontrado')
+    
 def menuQuery(tipo):
     '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
     (str) -> none'''
@@ -81,10 +82,10 @@ def menuQuery(tipo):
             print(f'ERROR: No se pueden mostrar los valores consultados')
         finally:
             esperarUsuario()
+
 def esperarUsuario():
     '''Input que hace de validacion
     (none) -> (none)'''
-
     input('\nPresiona enter para continuar')
     
 def menuRol(opc):
@@ -206,7 +207,7 @@ def menu(nombre_user,aarch):
         
         #Creación de objetos
         if (opcion == 1):
-            opc1 = int(input("¿Qué tipo de rol desea crear?: \n1.Aprendiz\n2.Tutor\n3.Curso\n"))
+            opc1 = int(input("¿Qué tipo de rol desea crear?: \n1. Aprendiz\n2. Tutor\n3. Curso\n"))
             if opc1 == 1:
                 menuRol(1)
                 pass
@@ -236,20 +237,20 @@ def menu(nombre_user,aarch):
 
             elif (opc1 == 3):
                 tipo = "curso"
-                parametro = input("Digite el parámetro de búsqueda (tal cual es mostrado)\n- id\n- Nombre\n- Categoria\n - Modalidad\n- esGratuito\n- \n- esCertificable\n- Precio \n- Duracion \n- Calificación")
+                parametro = input("- id\n- Nombre\n- Categoria\n- Modalidad\n- esGratuito\n- esCertificable\n- Precio \n- Duracion \n- Calificación\n\nDigite el parámetro de búsqueda (tal cual es mostrado): ")
                 if parametro != 'esGratuito' or 'esCertificable':
                     parametro.lower()
-                if parametro == 'esGratuito' or 'esCertificable':
-                    valorParametro = input('f¿Buscas si {parametro} es verdadero o falso?: ')
+                elif parametro == 'esGratuito' or 'esCertificable':
+                    valorParametro = input(f'¿Buscas si {parametro} es verdadero o falso?: ')
                     if valorParametro == 'verdadero':
                         valorParametro = True
                     elif valorParametro  == 'falso':
                         valorParametro = False
                     else:
                         print('ERROR: Debes escribir si es "verdadero" o "falso"')
-                        valorParametro = input('f¿Buscas si {parametro} es verdadero o falso?: ')
+                        valorParametro = input(f'¿Buscas si {parametro} es verdadero o falso?: ')
 
-                if parametro == 'precio' or 'duracion' or 'calificacion':
+                elif parametro == 'precio' or 'duracion' or 'calificacion':
                     parametro = float(parametro)
                 else:
                     valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")

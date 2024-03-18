@@ -62,42 +62,30 @@ def query(tipo,llave,valor):
             return(f'ERROR: La vista {resultados} no es válida, intenta con otro valor')
     except couchdb.ResourceNotFound:
         return(f'ERROR: Docuemnto no encontrado')
-
+def menuQuery(tipo):
+    '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
+    (str) -> none'''
+    parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
+    valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+    res = query(tipo, parametro, valorParametro)
+    total = 0
+    if res is None:
+        print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+    else:
+        try:
+            for x in res:
+                print(x)
+                total =+ 1
+            sys.stdout.write(f'Datos encontrados: {total}')
+        except:
+            print(f'ERROR: No se pueden mostrar los valores consultados')
+        finally:
+            esperarUsuario()
 def esperarUsuario():
     '''Input que hace de validacion
     (none) -> (none)'''
 
     input('\nPresiona enter para continuar')
-
-def consultarUsuario(nombre):
-    '''Función encargada de consultar en la BBDD filtrando por usuarios
-    (str) -> obj'''
-    for row in db.view('_all_docs', include_docs = True):
-        doc = row['doc']
-        if doc.get('nombre') == nombre:
-            return doc
-    limpiarPantalla()
-    return print(f'No se encontró la entrada {nombre}')
-
-def consultarTutor(nombre):
-    '''Función encargada de consultar en la BBDD filtrando por Tutor
-    (str) -> obj'''
-    for row in db.view('_all_docs', include_docs = True):
-        doc = row['doc']
-        if doc.get('nombre') == nombre:
-            return doc
-    limpiarPantalla()
-    return print(f'No se encontró la entrada {nombre}')
-
-def consultarCurso(modalidad):
-    '''Función encargada de consultar en la BBDD filtrando por modalidad
-    (str) -> obj'''
-    for row in db.view('_all_docs', include_docs = True):
-        doc = row['doc']
-        if doc.get('modalidad') == modalidad:
-            return doc
-    limpiarPantalla()
-    return print(f'No se encontró la entrada {modalidad}')
     
 def menuRol(opc):
     '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero
@@ -236,69 +224,53 @@ def menu(nombre_user,aarch):
         
         #Validacionees y consultas
         elif (opcion == 2):
-            opc1 = int(input("Validaciones disponibles \n1. Consultar Aprendiz\n2. Consultar Docente\n 3. Consultar curso\n\nDigita una opción: "))
+            opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
             
             if (opc1 == 1):
                 tipo = "aprendiz"
-                parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
-                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
-                res = query(tipo, parametro, valorParametro)
-                total = 0
-                if res is None:
-                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
-                else:
-                    try:
-                        for x in res:
-                            if x.strip():
-                                datos = json.loads(x)
-                                print(datos)
-                            total =+ 1
-                        sys.stdout.write(f'Datos encontrados: {total}')
-                        esperarUsuario()
-                    except json.JSONDecodeError:
-                        print(f'ERROR: Formato JSON inválido')
+                menuQuery(tipo)
 
             elif (opc1 == 2):
                 tipo = "tutor"
-                parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
-                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
-                res = query(tipo, parametro, valorParametro)
-                total = 0
-                if res is None:
-                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
-                else:
-                    try:
-                        for x in res:
-                            if x.strip():
-                                datos = json.loads(x)
-                                print(datos)
-                            total =+ 1
-                        sys.stdout.write(f'Datos encontrados: {total}')
-                        esperarUsuario()
-                    except json.JSONDecodeError:
-                        print(f'ERROR: Formato JSON inválido')
+                menuQuery(tipo)
 
             elif (opc1 == 3):
                 tipo = "curso"
-                parametro = input("Digite el parámetro de búsqueda\n- id\n- Nombre\n- Categoria\n - Modalidad\n- esGratuito\n- \n- esCertificable\n- Precio \n- Duracion \n- Calificación")
+                parametro = input("Digite el parámetro de búsqueda (tal cual es mostrado)\n- id\n- Nombre\n- Categoria\n - Modalidad\n- esGratuito\n- \n- esCertificable\n- Precio \n- Duracion \n- Calificación")
                 if parametro != 'esGratuito' or 'esCertificable':
                     parametro.lower()
-                valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
-                res = query(tipo, parametro, valorParametro)
-                if res is None:
-                    print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
-                else:
-                    for x in res:
-                        print(x)
-                        cantidad =+ 1
-                    sys.stdout.write(f'Datos encontrados: {cantidad}')
-                    esperarUsuario()
+                if parametro == 'esGratuito' or 'esCertificable':
+                    valorParametro = input('f¿Buscas si {parametro} es verdadero o falso?: ')
+                    if valorParametro == 'verdadero':
+                        valorParametro = True
+                    elif valorParametro  == 'falso':
+                        valorParametro = False
+                    else:
+                        print('ERROR: Debes escribir si es "verdadero" o "falso"')
+                        valorParametro = input('f¿Buscas si {parametro} es verdadero o falso?: ')
 
-            elif (opc1 == 4):
-                # Retorna arriba
-                continue
+                if parametro == 'precio' or 'duracion' or 'calificacion':
+                    parametro = float(parametro)
+                else:
+                    valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+                    res = query(tipo, parametro, valorParametro)
+                    total = 0
+                    if res is None:
+                        print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+                    else:
+                        try:
+                            for x in res:
+                                print(x)
+                                total =+ 1
+                            sys.stdout.write(f'Datos encontrados: {total}')
+                        except:
+                            print(f'ERROR: No se pueden mostrar los valores consultados')
+                        finally:
+                            esperarUsuario()
             else:
-                print("Opción Inválida. Proporcione una opción correcta.")
+                print("Opción Inválida. Proporcione una opción correcta\n")
+                opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
+
         
         elif opcion == 3:
             print("Salir")

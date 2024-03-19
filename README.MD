@@ -74,7 +74,7 @@ Enlace a repo de GitHub con los siguientes archivos.
 
     - [ x ] Código en Python con el módulo del CRUD implementado
     - [  ] Código en JSON de cada colección de documentos
-    - [  ] Diseño de la vista o vistas en formato JSON
+    - [ x ] Diseño de la vista o vistas en formato JSON
 
 
 

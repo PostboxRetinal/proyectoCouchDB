@@ -53,7 +53,7 @@ def query(tipo,llave,valor):
     '''Función encargada de hacer querys requeridos con ayuda de 3 parámetros y validar según se requiera'''
     try:
         documentoDisenno = f"_design/{tipo}"
-        nombreVista = f"por_{llave}"
+        nombreVista = f"por{llave}"
         db[documentoDisenno]
         try:
             resultados = db.view(f"{tipo}/{nombreVista}",key=valor)
@@ -66,20 +66,23 @@ def query(tipo,llave,valor):
 def menuQuery(tipo):
     '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
     (str) -> none'''
-    parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").lower()
-    valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
+    parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").title()
+    valorParametro = input(f"Ingrese el valor del parámetro {parametro}: ")
     res = query(tipo, parametro, valorParametro)
     total = 0
-    if res is None:
-        print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
+    if res != None:
+        print(f'ERROR: No se encontró algun registro de {valorParametro} con {parametro}')
+        esperarUsuario()
+        sys.stdout.write(f'\nDatos encontrados: {total}')
+
     else:
         try:
             for x in res:
                 print(x)
-                total =+ 1
-            sys.stdout.write(f'Datos encontrados: {total}')
+                total += 1
+            sys.stdout.write(f'\nDatos encontrados: {total}')
         except:
-            print(f'ERROR: No se pueden mostrar los valores consultados')
+            print(f'\nERROR: No se pueden mostrar los valores consultados')
         finally:
             esperarUsuario()
 
@@ -88,7 +91,7 @@ def esperarUsuario():
     (none) -> (none)'''
     input('\nPresiona enter para continuar')
     
-def menuRol(opc):
+def menuCreacionRol(opc):
     '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero
     (int) -> none'''
     if opc == 1:
@@ -107,7 +110,7 @@ def menuRol(opc):
         }
 
         db.save(aprendiz)
-        validar_guardado(aprendiz["_id"])
+        validar_guardado(aprendiz["id"])
     elif opc == 2:
         tipo = "Tutor"
         id = input("Ingrese el ID del tutor: ")
@@ -126,7 +129,7 @@ def menuRol(opc):
         }
 
         db.save(tutor)
-        validar_guardado(tutor["_id"])
+        validar_guardado(tutor["id"])
     elif opc == 3:
         tipo = "Curso"
         id = input("Ingrese el ID del curso: ")
@@ -188,10 +191,10 @@ def menuRol(opc):
             "nombre":nombre,
             "categoria":categoria,
             "modalidad":modalidad,
-            "esGratuito":gratuito,
+            "gratuito":gratuito,
             "precio":precio,
             "duracion":duracion,  
-            "esCertificable":certificado,
+            "certificable":certificado,
             "calPromedio":calPromedio
         }
 
@@ -199,25 +202,25 @@ def menuRol(opc):
         validar_guardado(curso["_id"]) 
 
 def menu(nombre_user,aarch):
-    '''Función encargada de ejecutar la funcionalidad completa de la app
-    (none) -> (none)'''
+    '''Función encargada de manejar el menu principal
+    (str, str) -> (none)'''
     while True:
         limpiarPantalla(aarch)
         opcion = int(input(f"\n\n\|..-Corriendo desde SO {aarch}-..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Salir\n\nDigita una opción: "))
         
         #Creación de objetos
         if (opcion == 1):
-            opc1 = int(input("¿Qué tipo de rol desea crear?: \n1. Aprendiz\n2. Tutor\n3. Curso\n"))
+            opc1 = int(input('--ROLES DISPONIBLES-- \n\n1. Aprendiz\n2. Tutor\n3. Curso\n\n¿Qué tipo de rol deseas crear?:'))
             if opc1 == 1:
-                menuRol(1)
+                menuCreacionRol(1)
                 pass
             
             elif opc1 == 2:
-                menuRol(2)
+                menuCreacionRol(2)
                 pass
                 
             elif opc1 == 3:
-                menuRol(3)
+                menuCreacionRol(3)
                 pass
 
             else:
@@ -225,7 +228,7 @@ def menu(nombre_user,aarch):
         
         #Validacionees y consultas
         elif (opcion == 2):
-            opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
+            opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar tutor\n3. Consultar curso\n\nDigita una opción: "))
             
             if (opc1 == 1):
                 tipo = "aprendiz"
@@ -237,70 +240,52 @@ def menu(nombre_user,aarch):
 
             elif (opc1 == 3):
                 tipo = "curso"
-                parametro = input("- id\n- Nombre\n- Categoria\n- Modalidad\n- esGratuito\n- esCertificable\n- Precio \n- Duracion \n- Calificación\n\nDigite el parámetro de búsqueda (tal cual es mostrado): ")
-                if parametro != 'esGratuito' or 'esCertificable':
-                    parametro.lower()
-                elif parametro == 'esGratuito' or 'esCertificable':
-                    valorParametro = input(f'¿Buscas si {parametro} es verdadero o falso?: ')
+                parametro = input("- id\n- Nombre\n- Categoria\n- Modalidad\n- Gratuito\n- Certificable\n- Precio \n- Duración \n- Calificación\n\nDigite el parámetro de búsqueda sin tíldes: ").title()
+                if parametro == 'Gratuito' or 'Certificable':
+                    valorParametro = input(f'¿Buscas si el {tipo} es {parametro}? (Escribe verdadero/falso según corresponda): ')
                     if valorParametro == 'verdadero':
                         valorParametro = True
                     elif valorParametro  == 'falso':
                         valorParametro = False
                     else:
                         print('ERROR: Debes escribir si es "verdadero" o "falso"')
-                        valorParametro = input(f'¿Buscas si {parametro} es verdadero o falso?: ')
+                        valorParametro = input(f'¿Buscas si el {tipo} es {parametro}? (Escribe verdadero/falso según corresponda): ')
 
-                elif parametro == 'precio' or 'duracion' or 'calificacion':
+                if parametro == 'Precio' or 'Duracion' or 'Calificacion':
                     parametro = float(parametro)
+                
+                valorParametro = input(f"Ingrese el valor del parámetro {parametro}: ")
+                res = query(tipo, parametro, valorParametro)
+                total = 0
+                if res is None:
+                    print(f'ERROR: No se encontró algún registro de {valorParametro} por {parametro}')
                 else:
-                    valorParametro = input(f"Ingrese el valor del parámetro '{parametro}': ")
-                    res = query(tipo, parametro, valorParametro)
-                    total = 0
-                    if res is None:
-                        print(f'ERROR: No se encontró algun registro con {parametro} {valorParametro}')
-                    else:
-                        try:
-                            for x in res:
-                                print(x)
-                                total =+ 1
-                            sys.stdout.write(f'Datos encontrados: {total}')
-                        except:
-                            print(f'ERROR: No se pueden mostrar los valores consultados')
-                        finally:
-                            esperarUsuario()
+                    try:
+                        for x in res:
+                            print(x)
+                            total =+ 1
+                        sys.stdout.write(f'\nDatos encontrados: {total}')
+                    except:
+                        print(f'\nERROR: No se pueden mostrar los valores consultados')
+                    finally:
+                        esperarUsuario()
             else:
                 print("Opción Inválida. Proporcione una opción correcta\n")
                 opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
 
         
         elif opcion == 3:
-            print("Salir")
             #Sale con código de error 1, básicamente sin error
             exit(1)
 
         else:
             print("Opción Inválida. Proporcione una opción correcta.")
 
-#VALIDACION INICIAL
-print(f"Estableciendo conexión con {host}:{port} ...")
-time.sleep(1)
-
-try:
-    couch_server.login(user,pwd)
-    if (db_name in couch_server):
-        print(f'\nBBDD {db_name} encontrada')
-        db = couch_server[db_name]
-except couchdb.Unauthorized:
-    print('Usuario o Clave Incorrectas. Intenta nuevamente')
-    exit(2)
-except:
-    print(f'No se encontró la base de datos {db_name}, será creada')
-    db = couch_server.create(db_name)
-
 def main(aarch):
     '''Llama los módulos requeridos para la ejecución del programa
     (none) -> (none)'''
     try:
+        limpiarPantalla(aarch)
         nombre_user = input('BIENVENIDO\nIngresa tu nombre: ')
         menu(nombre_user,aarch)
     except KeyboardInterrupt:
@@ -313,26 +298,28 @@ def main(aarch):
 #EJECUCION
 if __name__ == '__main__':
     aarch = detectarArquitectura()
-    main(aarch)
+    print(f"Estableciendo conexión con {host}:{port} ...")
+    try:
+        #Login
+        couch_server.login(user,pwd)
+        if (db_name in couch_server):
+            print(f'\nBBDD {db_name} encontrada')
+            db = couch_server[db_name]
+            main(aarch)
+
+    except couchdb.http.Unauthorized:
+        print(f'No se encontró la base de datos {db_name}, será creada')
+        print(f'ERROR: No puedes crear una BBDD como {user}. Actualiza las credenciales e intenta nuevamente')
+        #db = couch_server.create(db_name)
+        #main(aarch)
+        
+    except couchdb.Unauthorized:
+        print('Usuario o Clave Incorrectas. Intenta nuevamente')
+        exit(2)
+    
     
 
-
-""""
-#(2)  Select: selección de un res por un determinado valor de llave ("_id")
-doc_creado = db["1244324"]
-print(doc_creado)
- #Otra forma de ejecutar queries usando el lenguaje "mango" de consultas de CouchDB (notación JSON)
- #referencia de queries más complejos en:
- #https://docs.couchdb.org/en/stable/api/database/find.html
-query = {"selector":{"rep_legal": "Diana L"}}
-docs = db.find(query)
-result = [] 
-
-#docs es un objeto iterable:
-for i in docs:
-  print(dict(i)) #i es un res de couchdb que puede convertirse a diccionario...
-  result.append(dict(i)) #...y adicionarse a una lista
-
+"""
 #(3) Update: Modificación de un res previamente consultado:
 doc_creado["fondos"] = 1000000.0
 db.save(doc_creado)

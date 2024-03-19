@@ -1,0 +1,22 @@
+{
+    "_id": "_design/tutor",
+    "_rev": "2-f824b40f0e5f7b7075f3bd2727b2a1be",
+    "views": {
+      "porId": {
+        "map": "function (doc) { if (doc.tipo === 'Tutor' && doc.id)  { emit(doc.id, doc); } }"
+      },
+      "porSemestre": {
+        "map": "function (doc) { if (doc.tipo === 'Tutor' && doc.semestre)  { emit(doc.semestre, doc); } }"
+      },
+      "porNombre": {
+        "map": "function (doc) { if (doc.tipo === 'Tutor' && doc.nombre)  { emit(doc.nombre, doc); } }"
+      },
+      "porCarrera": {
+        "map": "function (doc) { if (doc.tipo === 'Tutor' && doc.carrera)  { emit(doc.carrera, doc); } }"
+      },
+      "porCalificacion": {
+        "map": "function (doc) { if (doc.tipo === 'Tutor' && doc.calPromedio)  { emit(doc.calPromedio, doc); } }"
+      }
+    },
+    "language": "javascript"
+  }

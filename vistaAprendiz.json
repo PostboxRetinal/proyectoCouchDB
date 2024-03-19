@@ -1,0 +1,19 @@
+{
+    "_id": "_design/aprendiz",
+    "_rev": "2-7518db366808eaa49d4ac24092c86ac2",
+    "views": {
+      "porId": {
+        "map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.id)  { emit(doc.id, doc); } }"
+      },
+      "porCarrera": {
+        "map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.carrera)  { emit(doc.carrera, doc); } }"
+      },
+      "porSemestre": {
+        "map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.semestre)  { emit(doc.semestre, doc); } }"
+      },
+      "porNombre": {
+        "map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.nombre)  { emit(doc.nombre, doc); } }"
+      }
+    },
+    "language": "javascript"
+  }

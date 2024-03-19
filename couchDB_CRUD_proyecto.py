@@ -3,7 +3,7 @@
 
 #IMPORTS
 import couchdb
-import subprocess,time,os,sys,json
+import subprocess,time,os,sys
 
 #CODIGOS DE ERROR
     #1 SIN ERROR

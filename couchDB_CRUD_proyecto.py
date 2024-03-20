@@ -144,8 +144,14 @@ def creacionRol(opc):
         nombre = input("Ingrese el nombre del aprendiz: ")
         carrera = input("Ingrese la carrera del aprendiz: ")
         semestre = int(input("Ingrese el semestre cursado del aprendiz: "))
-        curso =  int(input("Ingrese el semestre cursado del aprendiz: "))
+        agregarCurso = input('\nLe gustaria agregar a este estudiante un curso previamente creado? (S/N): ').lower()
 
+        if agregarCurso == 's':
+            curso =  int(input("Ingrese ID del curso al cual asiste el aprendiz"))
+            cursos.append(curso)
+        else:
+            print('\nAprendiz nuevo, no será agregado a ningún curso')
+            esperarUsuario()
 
         aprendiz = {
             "tipo":tipo,
@@ -158,6 +164,7 @@ def creacionRol(opc):
 
         db.save(aprendiz)
         validar_guardado(aprendiz["_id"])
+
     elif opc == 2:
         tipo = "Tutor"
         id = input("Ingrese el ID del tutor: ")
@@ -177,6 +184,7 @@ def creacionRol(opc):
 
         db.save(tutor)
         validar_guardado(tutor["_id"])
+
     elif opc == 3:
         alumnos = []
         tipo = "Curso"
@@ -339,9 +347,39 @@ def menu(nombre_user,aarch):
             query
             
         #Eliminación
-        elif (opcion == 4): 
-            id = input('Ingrese el ID del objeto que desea eliminar (se puede obtener usando el módulo de consulta)')
-            query(3,'id','',id)
+        elif (opcion == 4):
+            tipo = int(input('--TIPOS DISPONIBLE--\n\n1. Aprendiz\n2. Tutor\n3. Curso\n\nIngrese qué tipo de entrada desea borrar: '))
+            id = input('Ingrese el ID asigando del tipo que desea eliminar (se puede obtener usando el módulo de consulta): ')
+            #Eliminar Aprendiz
+            if tipo == 1:
+                tipo = 'aprendiz'
+                valor = query(3,tipo,'Id',id)
+                if valor == True:
+                    print(f'El {tipo} identificado con {id} ha sido eliminado exitosamente!\n')
+                else:
+                    print(f'El {tipo} identificado con {id} NO ha podido ser eliminado!\n')
+                esperarUsuario()
+            #Eliminar Tutor
+            elif tipo == 2:
+                tipo = 'tutor'
+                valor = query(3,tipo,'Id',id)
+                if valor == True:
+                    print(f'El {tipo} identificado con {id} ha sido eliminado exitosamente!\n')
+                else:
+                    print(f'El {tipo} identificado con {id} NO ha podido ser eliminado!\n')
+                esperarUsuario()
+            #Eliminar Curso
+            elif tipo == 3:
+                tipo = 'curso'
+                valor = query(3,tipo,'Id',id)
+                if valor == True:
+                    print(f'El {tipo} identificado con {id} ha sido eliminado exitosamente!\n')
+                else:
+                    print(f'El {tipo} identificado con {id} NO ha podido ser eliminado!\n')
+                esperarUsuario()
+
+            else:
+                print('\nERROR: Sus parámetros de búsqueda no coinciden con los nuestros\n')                        
         #Salida
         elif (opcion == 5): 
             exit(1) #Sale con código de error 1, básicamente sin error

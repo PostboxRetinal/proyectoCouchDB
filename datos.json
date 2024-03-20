@@ -1,0 +1,298 @@
+{
+	"total_rows": 15,
+	"offset": 0,
+	"rows": [{
+		"id": "0e93609ed4dcc15d258f887887015716",
+		"key": "0e93609ed4dcc15d258f887887015716",
+		"value": {
+			"rev": "1-4629cdb56603f11d5408b62c243c6041"
+		},
+		"doc": {
+			"_id": "0e93609ed4dcc15d258f887887015716",
+			"_rev": "1-4629cdb56603f11d5408b62c243c6041",
+			"tipo": "Tutor",
+			"id": "123452",
+			"nombre": "Orlando",
+			"carrera": "Informatica",
+			"semestre": 9,
+			"calPromedio": 4.0
+		}
+	}, {
+		"id": "0e93609ed4dcc15d258f88788701b1c4",
+		"key": "0e93609ed4dcc15d258f88788701b1c4",
+		"value": {
+			"rev": "1-f74a09b729f5b91595c47ab1efee3cca"
+		},
+		"doc": {
+			"_id": "0e93609ed4dcc15d258f88788701b1c4",
+			"_rev": "1-f74a09b729f5b91595c47ab1efee3cca",
+			"tipo": "Curso",
+			"id": "648204",
+			"nombre": "Calculo I",
+			"categoria": "Ciencias básicas",
+			"modalidad": "Presencial",
+			"esGratuito": false,
+			"precio": 600000.0,
+			"duracion": 50,
+			"esCertificable": true,
+			"calPromedio": 4.0
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b5890004ed",
+		"key": "1b60f43e4bd40a6640d4d0b5890004ed",
+		"value": {
+			"rev": "1-2e31603324d76b68ba2d431667a41733"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b5890004ed",
+			"_rev": "1-2e31603324d76b68ba2d431667a41733",
+			"tipo": "Aprendiz",
+			"id": "342523",
+			"nombre": "Charliexx",
+			"carrera": "Ing Multimedia",
+			"semestre": 7
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b58900080b",
+		"key": "1b60f43e4bd40a6640d4d0b58900080b",
+		"value": {
+			"rev": "1-7517673f339ba77af2743e39da90afd4"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b58900080b",
+			"_rev": "1-7517673f339ba77af2743e39da90afd4",
+			"tipo": "Aprendiz",
+			"id": "347832",
+			"nombre": "Gertrudee",
+			"carrera": "Matematica Pura",
+			"semestre": 5
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b58900086e",
+		"key": "1b60f43e4bd40a6640d4d0b58900086e",
+		"value": {
+			"rev": "1-44518dad28c8ca79c761eb0cb3ec9d9d"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b58900086e",
+			"_rev": "1-44518dad28c8ca79c761eb0cb3ec9d9d",
+			"tipo": "Aprendiz",
+			"id": "657274",
+			"nombre": "Jacob",
+			"carrera": "Comunicación",
+			"semestre": 8
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b589001f7a",
+		"key": "1b60f43e4bd40a6640d4d0b589001f7a",
+		"value": {
+			"rev": "1-27e4fc8b3970a4ca856b56deb546b3ea"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b589001f7a",
+			"_rev": "1-27e4fc8b3970a4ca856b56deb546b3ea",
+			"tipo": "Curso",
+			"id": "256734",
+			"nombre": "Fisica I",
+			"categoria": "Ciencias básicas",
+			"modalidad": "Presencial",
+			"gratuito": false,
+			"precio": 750000.0,
+			"duracion": 60,
+			"certificable": false,
+			"calPromedio": 3.5
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b58900245a",
+		"key": "1b60f43e4bd40a6640d4d0b58900245a",
+		"value": {
+			"rev": "1-898154a61940d8a8aa72d013f2d7c01d"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b58900245a",
+			"_rev": "1-898154a61940d8a8aa72d013f2d7c01d",
+			"tipo": "Tutor",
+			"id": "535792",
+			"nombre": "Maira Palacios",
+			"carrera": "Matemáticas",
+			"semestre": 9,
+			"calPromedio": 4.5
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b589004188",
+		"key": "1b60f43e4bd40a6640d4d0b589004188",
+		"value": {
+			"rev": "1-ead648788f2aaf2a63cd7543f5965c47"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b589004188",
+			"_rev": "1-ead648788f2aaf2a63cd7543f5965c47",
+			"tipo": "Curso",
+			"id": "957283",
+			"nombre": "Fisica II",
+			"categoria": "Ciencias básicas",
+			"modalidad": "Presencial",
+			"gratuito": false,
+			"precio": 800000.0,
+			"duracion": 60,
+			"certificable": true,
+			"alumnos": [234562],
+			"calPromedio": 4.6
+		}
+	}, {
+		"id": "1b60f43e4bd40a6640d4d0b589007556",
+		"key": "1b60f43e4bd40a6640d4d0b589007556",
+		"value": {
+			"rev": "1-5e6cf584e56488335b93ce10324c2736"
+		},
+		"doc": {
+			"_id": "1b60f43e4bd40a6640d4d0b589007556",
+			"_rev": "1-5e6cf584e56488335b93ce10324c2736",
+			"tipo": "Aprendiz",
+			"id": "474925",
+			"nombre": "Mateo",
+			"carrera": "Ing Mecatronica",
+			"cursos": [],
+			"semestre": 8
+		}
+	}, {
+		"id": "35971e670c69d7d659b995d1c8009c98",
+		"key": "35971e670c69d7d659b995d1c8009c98",
+		"value": {
+			"rev": "1-cb4467e22a452a8690ff1eb5c03186d3"
+		},
+		"doc": {
+			"_id": "35971e670c69d7d659b995d1c8009c98",
+			"_rev": "1-cb4467e22a452a8690ff1eb5c03186d3",
+			"tipo": "Aprendiz",
+			"id": "234562",
+			"nombre": "Carlos",
+			"carrera": "Ing Informatica",
+			"semestre": 5
+		}
+	}, {
+		"id": "35971e670c69d7d659b995d1c800a8e1",
+		"key": "35971e670c69d7d659b995d1c800a8e1",
+		"value": {
+			"rev": "1-15032d47e1ac69e73f869083ddf754d4"
+		},
+		"doc": {
+			"_id": "35971e670c69d7d659b995d1c800a8e1",
+			"_rev": "1-15032d47e1ac69e73f869083ddf754d4",
+			"tipo": "Aprendiz",
+			"id": "749284",
+			"nombre": "Eduardo",
+			"carrera": "Ing Informatica",
+			"semestre": 5
+		}
+	}, {
+		"id": "_design/aprendiz",
+		"key": "_design/aprendiz",
+		"value": {
+			"rev": "3-561128cf2776486d6399c83cbfdc2c6f"
+		},
+		"doc": {
+			"_id": "_design/aprendiz",
+			"_rev": "3-561128cf2776486d6399c83cbfdc2c6f",
+			"views": {
+				"porId": {
+					"map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.id)  { emit(doc.id, doc); } }"
+				},
+				"porCarrera": {
+					"map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.carrera)  { emit(doc.carrera, doc); } }"
+				},
+				"porSemestre": {
+					"map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.semestre)  { emit(doc.semestre, doc); } }"
+				},
+				"porNombre": {
+					"map": "function (doc) { if (doc.tipo === 'Aprendiz' && doc.nombre)  { emit(doc.nombre, doc); } }"
+				}
+			},
+			"language": "javascript"
+		}
+	}, {
+		"id": "_design/curso",
+		"key": "_design/curso",
+		"value": {
+			"rev": "12-d074c35726aa8a24016df8c16b3946ad"
+		},
+		"doc": {
+			"_id": "_design/curso",
+			"_rev": "12-d074c35726aa8a24016df8c16b3946ad",
+			"views": {
+				"porId": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.id)  { emit(doc.id, doc); } }"
+				},
+				"porNombre": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.nombre)  { emit(doc.nombre, doc); } }"
+				},
+				"porCertificado": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.certificable)  { emit(doc.certificable, doc); } }"
+				},
+				"porDuracion": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.duracion)  { emit(doc.duracion, doc); } }"
+				},
+				"porCategoria": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.categoria)  { emit(doc.categoria, doc); } }"
+				},
+				"porCalificacion": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.calPromedio)  { emit(doc.calPromedio, doc); } }"
+				},
+				"porModalidad": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.modalidad)  { emit(doc.modalidad, doc); } }"
+				},
+				"porGratuito": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.gratuito)  { emit(doc.gratuito, doc); } }"
+				},
+				"porPrecio": {
+					"map": "function (doc) { if (doc.tipo === 'Curso' && doc.precio)  { emit(doc.precio, doc); } }"
+				}
+			},
+			"language": "javascript"
+		}
+	}, {
+		"id": "_design/tutor",
+		"key": "_design/tutor",
+		"value": {
+			"rev": "3-c37e79d00eebe404a00936ee770b410e"
+		},
+		"doc": {
+			"_id": "_design/tutor",
+			"_rev": "3-c37e79d00eebe404a00936ee770b410e",
+			"views": {
+				"porId": {
+					"map": "function (doc) { if (doc.tipo === 'Tutor' && doc.id)  { emit(doc.id, doc); } }"
+				},
+				"porSemestre": {
+					"map": "function (doc) { if (doc.tipo === 'Tutor' && doc.semestre)  { emit(doc.semestre, doc); } }"
+				},
+				"porNombre": {
+					"map": "function (doc) { if (doc.tipo === 'Tutor' && doc.nombre)  { emit(doc.nombre, doc); } }"
+				},
+				"porCarrera": {
+					"map": "function (doc) { if (doc.tipo === 'Tutor' && doc.carrera)  { emit(doc.carrera, doc); } }"
+				},
+				"porCalificacion": {
+					"map": "function (doc) { if (doc.tipo === 'Tutor' && doc.calPromedio)  { emit(doc.calPromedio, doc); } }"
+				}
+			},
+			"language": "javascript"
+		}
+	}, {
+		"id": "c3ef1c8d5fdcd2eba19dec0214013f18",
+		"key": "c3ef1c8d5fdcd2eba19dec0214013f18",
+		"value": {
+			"rev": "1-8639fd2cf8feab9126caa28e94ece3dd"
+		},
+		"doc": {
+			"_id": "c3ef1c8d5fdcd2eba19dec0214013f18",
+			"_rev": "1-8639fd2cf8feab9126caa28e94ece3dd",
+			"tipo": "Tutor",
+			"id": "432521",
+			"nombre": "Alvaro",
+			"carrera": "Ing Industrial",
+			"semestre": 9,
+			"calPromedio": 4.3
+		}
+	}]
+}

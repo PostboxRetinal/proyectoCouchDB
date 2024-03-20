@@ -73,7 +73,7 @@ Las relaciones también tienen propiedades, útiles en las consultas.
 Enlace a repo de GitHub con los siguientes archivos.
 
     - [ x ] Código en Python con el módulo del CRUD implementado
-    - [  ] Código en JSON de cada colección de documentos
+    - [ x ] Código en JSON de cada colección de documentos
     - [ x ] Diseño de la vista o vistas en formato JSON
 
 

@@ -53,6 +53,7 @@ def validar_guardado(doc_id):
         print(f"El documento con ID: {doc_id} se ha guardado correctamente en la BBDD")
     else:
         print(f"El documento con ID: {doc_id} no se ha guardado correctamente en la BBDD")
+    esperarUsuario()
 
 def query(tipoQuery, tipoFiltro, llave, valor):
     '''Función encargada de hacer querys requeridos con ayuda de 4 parámetros y validar según se requiera'''
@@ -89,12 +90,12 @@ def query(tipoQuery, tipoFiltro, llave, valor):
     else:
         return(f'ERROR GENERAL. Intena nuevamente')
     
-def menuQuery(tipo):
+def menuQuery(tipoQuery,tipoFiltro):
     '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
     (str) -> none'''
     parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").title()
     valorParametro = input(f"Ingrese el valor del parámetro {parametro}: ")
-    res = query(tipo, parametro, valorParametro)
+    res = query(tipoQuery, tipoFiltro, parametro, valorParametro)
     total = 0
     if res != None:
         print(f'ERROR: No se encontró algun registro de {valorParametro} con {parametro}')
@@ -113,13 +114,11 @@ def menuQuery(tipo):
             esperarUsuario()
 
 def esperarUsuario():
-    '''Input que hace de validacion
-    (none) -> (none)'''
-    input('\nPresiona enter para continuar')
+    '''Funcion con input que juega el papel de validador'''
+    input('\nPresiona enter para continuar... ')
     
 def creacionRol(opc):
-    '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero
-    (int) -> none'''
+    '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero'''
     if opc == 1:
         tipo = "Aprendiz"
         id = input("Ingrese el ID del aprendiz: ")
@@ -136,7 +135,7 @@ def creacionRol(opc):
         }
 
         db.save(aprendiz)
-        validar_guardado(aprendiz["id"])
+        validar_guardado(aprendiz["_id"])
     elif opc == 2:
         tipo = "Tutor"
         id = input("Ingrese el ID del tutor: ")
@@ -155,7 +154,7 @@ def creacionRol(opc):
         }
 
         db.save(tutor)
-        validar_guardado(tutor["id"])
+        validar_guardado(tutor["_id"])
     elif opc == 3:
         tipo = "Curso"
         id = input("Ingrese el ID del curso: ")
@@ -208,7 +207,6 @@ def creacionRol(opc):
             print('Opción incorrecta. Intenta nuevamente')
             certificado = int(input("¿El curso tiene certificado?\n\n1. Verdadero\n2. Falso)\n\nSeleccione una opción: "))
 
-
         calPromedio = float(input("\nIngrese la calificación promedio del curso (0.0 a 5.0): "))
 
         curso = {
@@ -228,15 +226,15 @@ def creacionRol(opc):
         validar_guardado(curso["_id"]) 
 
 def menu(nombre_user,aarch):
-    '''Función encargada de manejar el menu principal
-    (str, str) -> (none)'''
+    '''Función encargada de manejar el menu principal'''
     while True:
         limpiarPantalla(aarch)
-        opcion = int(input(f"\n\n\|..-Corriendo desde SO {aarch}-..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Salir\n\nDigita una opción: "))
+        opcion = int(input(f"\n\n\|..-  Corriendo desde SO: {aarch}  -..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Eliminación de valores\n4. Salir\n\nDigita una opción: "))
         
         #Creación de objetos
         if (opcion == 1):
-            opc1 = int(input('--ROLES DISPONIBLES-- \n\n1. Aprendiz\n2. Tutor\n3. Curso\n\n¿Qué tipo de rol deseas crear?:'))
+            limpiarPantalla(aarch)
+            opc1 = int(input('--ROLES DISPONIBLES-- \n\n1. Aprendiz\n2. Tutor\n3. Curso\n\n¿Qué tipo de rol deseas crear?: '))
             if opc1 == 1:
                 creacionRol(1)
                 pass
@@ -254,35 +252,40 @@ def menu(nombre_user,aarch):
         
         #Validacionees y consultas
         elif (opcion == 2):
+            limpiarPantalla(aarch)
             opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar tutor\n3. Consultar curso\n\nDigita una opción: "))
             
             if (opc1 == 1):
-                tipo = "aprendiz"
-                menuQuery(tipo)
+                tipoFiltro = "aprendiz"
+                tipoQuery = 1
+                menuQuery(tipoQuery, tipoFiltro)
 
             elif (opc1 == 2):
-                tipo = "tutor"
-                menuQuery(tipo)
+                tipoFiltro = "tutor"
+                tipoQuery = 1
+                menuQuery(tipoQuery, tipoFiltro)
 
             elif (opc1 == 3):
-                tipo = "curso"
+                tipoFiltro = "curso"
+                tipoQuery = 1
                 parametro = input("- id\n- Nombre\n- Categoria\n- Modalidad\n- Gratuito\n- Certificable\n- Precio \n- Duración \n- Calificación\n\nDigite el parámetro de búsqueda sin tíldes: ").title()
                 if parametro == 'Gratuito' or 'Certificable':
-                    valorParametro = input(f'¿Buscas si el {tipo} es {parametro}? (Escribe verdadero/falso según corresponda): ')
+                    valorParametro = input(f'¿Buscas si el {tipoFiltro} es {parametro}? (Escribe verdadero/falso según corresponda): ')
                     if valorParametro == 'verdadero':
                         valorParametro = True
                     elif valorParametro  == 'falso':
                         valorParametro = False
                     else:
                         print('ERROR: Debes escribir si es "verdadero" o "falso"')
-                        valorParametro = input(f'¿Buscas si el {tipo} es {parametro}? (Escribe verdadero/falso según corresponda): ')
+                        valorParametro = input(f'¿Buscas si el {tipoFiltro} es {parametro}? (Escribe verdadero/falso según corresponda): ')
 
                 if parametro == 'Precio' or 'Duracion' or 'Calificacion':
                     parametro = float(parametro)
                 
                 valorParametro = input(f"Ingrese el valor del parámetro {parametro}: ")
-                res = query(tipo, parametro, valorParametro)
+                res = query(tipoQuery, tipoFiltro, parametro, valorParametro)
                 total = 0
+
                 if res is None:
                     print(f'ERROR: No se encontró algún registro de {valorParametro} por {parametro}')
                 else:
@@ -299,10 +302,13 @@ def menu(nombre_user,aarch):
                 print("Opción Inválida. Proporcione una opción correcta\n")
                 opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
 
-        
-        elif opcion == 3:
-            #Sale con código de error 1, básicamente sin error
+        #Eliminaciones
+        elif (opcion == 3):
             exit(1)
+
+        #Salida
+        elif (opcion == 4): 
+            exit(1) #Sale con código de error 1, básicamente sin error
 
         else:
             print("Opción Inválida. Proporcione una opción correcta.")
@@ -311,8 +317,8 @@ def main(aarch):
     '''Llama los módulos requeridos para la ejecución del programa
     (none) -> (none)'''
     try:
-        limpiarPantalla(aarch)
-        nombre_user = input('BIENVENIDO\nIngresa tu nombre: ')
+        nombre_user = input('\nBIENVENIDO\nIngresa tu nombre: ')
+        esperarUsuario()
         menu(nombre_user,aarch)
     except KeyboardInterrupt:
         salida = input('\n¿Deseas salir de la aplicación? (S/N): ').lower()
@@ -322,11 +328,13 @@ def main(aarch):
             menu(nombre_user,aarch)
 
 #EJECUCION
-if __name__ == '__main__':
+if (__name__ == '__main__'):
     aarch = detectarArquitectura()
+    limpiarPantalla(aarch)
     try:
         #Login
-        print(f"Estableciendo conexión con {host}:{port} ...")
+        print(f"\nEstableciendo conexión con {host}:{port} ...")
+        time.sleep(0.8)
         couch_server.login(user,pwd)
         if (db in couch_server):
             print(f'\nBBDD {db} encontrada')

@@ -16,10 +16,11 @@ pwd = "testing123*-" #PASS
 host = "127.0.0.1" #IP/LOCALHOST
 port = "5984" #PORT
 db = "cli_recommendation" #NOMBRE DOC BBDD
+url = (f'http://{user}:{pwd}@{host}:{port}/')
 
 #CONEXION BBDD
 try:
-    couch_server = couchdb.Server(f"http://{user}:{pwd}@{host}:{port}/")
+    couch_server = couchdb.Server(url)
 except:
     print(f'ERROR: No se puede conectar a {host}. Abortando')
     exit(3)
@@ -56,22 +57,25 @@ def validar_guardado(doc_id):
     esperarUsuario()
 
 def query(tipoQuery, tipoFiltro, llave, valor):
-    '''Función encargada de hacer querys requeridos con ayuda de 4 parámetros y validar según se requiera'''
+    '''Función encargada de hacer querys requeridos con ayuda de 4 parámetros y validar según se requiera
+    \ntipoQuery\n\n1) Consulta\n2) Actualiza\n3) Elimina\n'''
+    
     documentoDisenno = f"_design/{tipoFiltro}"
     nombreVista = f"por{llave}"
 
     if tipoQuery == 1:
-        #Consultar
+        #Consultar | PRINCIPAL
         try:
             db[documentoDisenno]
             resultados = db.view(f"{tipoFiltro}/{nombreVista}",key=valor)
-            return (row.value for row in resultados)
+            return (list(row.value for row in resultados))
         
         except couchdb.http.ResourceNotFound:
             return(f'ERROR: La vista {documentoDisenno} no es válida, intenta con otro valor')
         
     elif tipoQuery == 2:
         #Actualizar
+
         # def Update(doc_id, data):
         #     doc = db[doc_id]
         #     doc.update(data)
@@ -79,7 +83,7 @@ def query(tipoQuery, tipoFiltro, llave, valor):
         try:
             db[documentoDisenno]
             resultados = db.view(f"{tipoFiltro}/{nombreVista}",key=valor)
-            linea = 1
+            linea = 0
             for line in resultados:
                 datos = (f'{linea}. {line}')
                 linea += 1
@@ -87,21 +91,33 @@ def query(tipoQuery, tipoFiltro, llave, valor):
         
         except couchdb.http.ResourceNotFound:
             return(f'ERROR: La vista {documentoDisenno} no es válida, intenta con otro valor')
+    #Eliminar
+    elif tipoQuery == 3:
+        try:
+            db[documentoDisenno]
+            resultados = db.view(f"{tipoFiltro}/{nombreVista}",key=valor)
+
+            for dato in resultados:
+                db.delete(db[dato.id])
+            return (True)
+        
+        except couchdb.http.ResourceNotFound:
+            print(f'ERROR: La vista {documentoDisenno} no es válida, intenta con otro valor')
+            return (False)
     else:
-        return(f'ERROR GENERAL. Intena nuevamente')
+        return(f'ERROR GENERAL. Intenta nuevamente')
     
 def menuQuery(tipoQuery,tipoFiltro):
-    '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
-    (str) -> none'''
+    '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces'''
+
     parametro = input("Se puede buscar usando los siguientes parámetros\n- id\n- Nombre\n- Carrera\n- Semestre\n\n Digite el parámetro de búsqueda: ").title()
     valorParametro = input(f"Ingrese el valor del parámetro {parametro}: ")
     res = query(tipoQuery, tipoFiltro, parametro, valorParametro)
     total = 0
-    if res != None:
+    if len(res) == 0:
         print(f'ERROR: No se encontró algun registro de {valorParametro} con {parametro}')
         esperarUsuario()
         sys.stdout.write(f'\nDatos encontrados: {total}')
-
     else:
         try:
             for x in res:
@@ -115,22 +131,28 @@ def menuQuery(tipoQuery,tipoFiltro):
 
 def esperarUsuario():
     '''Funcion con input que juega el papel de validador'''
+
     input('\nPresiona enter para continuar... ')
     
 def creacionRol(opc):
     '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero'''
+
+    cursos = []
     if opc == 1:
         tipo = "Aprendiz"
         id = input("Ingrese el ID del aprendiz: ")
         nombre = input("Ingrese el nombre del aprendiz: ")
         carrera = input("Ingrese la carrera del aprendiz: ")
         semestre = int(input("Ingrese el semestre cursado del aprendiz: "))
+        curso =  int(input("Ingrese el semestre cursado del aprendiz: "))
+
 
         aprendiz = {
             "tipo":tipo,
             "id":id,
             "nombre":nombre,
             "carrera":carrera,
+            "cursos":cursos,
             "semestre":semestre
         }
 
@@ -156,6 +178,7 @@ def creacionRol(opc):
         db.save(tutor)
         validar_guardado(tutor["_id"])
     elif opc == 3:
+        alumnos = []
         tipo = "Curso"
         id = input("Ingrese el ID del curso: ")
         nombre = input("Ingrese el nombre del curso: ")
@@ -208,6 +231,13 @@ def creacionRol(opc):
             certificado = int(input("¿El curso tiene certificado?\n\n1. Verdadero\n2. Falso)\n\nSeleccione una opción: "))
 
         calPromedio = float(input("\nIngrese la calificación promedio del curso (0.0 a 5.0): "))
+        estudiante = input('\nDesea agregar algún estudiante por ID al curso? (S/N): ').lower()
+        if estudiante == 's':
+            identificacionEstudiante = int(input('Ingrese el código del estudiante: '))
+            alumnos.append(identificacionEstudiante)
+        else:
+            print('\nAprendiz nuevo, no será agregado a ningún curso')
+            esperarUsuario()
 
         curso = {
             "tipo":tipo,
@@ -219,6 +249,7 @@ def creacionRol(opc):
             "precio":precio,
             "duracion":duracion,  
             "certificable":certificado,
+            "alumnos":alumnos,
             "calPromedio":calPromedio
         }
 
@@ -229,9 +260,9 @@ def menu(nombre_user,aarch):
     '''Función encargada de manejar el menu principal'''
     while True:
         limpiarPantalla(aarch)
-        opcion = int(input(f"\n\n\|..-  Corriendo desde SO: {aarch}  -..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Eliminación de valores\n4. Salir\n\nDigita una opción: "))
+        opcion = int(input(f"\n\n\|..-  Corriendo desde SO: {aarch}  -..|/\n\nHola {nombre_user}\n\n1. Creación de valores\n2. Consulta de valores\n3. Actualización de valores\n4. Eliminación de valores\n5. Salir\n\nDigita una opción: "))
         
-        #Creación de objetos
+        #Creación
         if (opcion == 1):
             limpiarPantalla(aarch)
             opc1 = int(input('--ROLES DISPONIBLES-- \n\n1. Aprendiz\n2. Tutor\n3. Curso\n\n¿Qué tipo de rol deseas crear?: '))
@@ -250,7 +281,7 @@ def menu(nombre_user,aarch):
             else:
                 print("Opción Inválida. Indique una opción correcta.")
         
-        #Validacionees y consultas
+        #Consulta
         elif (opcion == 2):
             limpiarPantalla(aarch)
             opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar tutor\n3. Consultar curso\n\nDigita una opción: "))
@@ -286,7 +317,7 @@ def menu(nombre_user,aarch):
                 res = query(tipoQuery, tipoFiltro, parametro, valorParametro)
                 total = 0
 
-                if res is None:
+                if len(res) == 0:
                     print(f'ERROR: No se encontró algún registro de {valorParametro} por {parametro}')
                 else:
                     try:
@@ -302,12 +333,17 @@ def menu(nombre_user,aarch):
                 print("Opción Inválida. Proporcione una opción correcta\n")
                 opc1 = int(input("Validaciones disponibles\n\n1. Consultar aprendiz\n2. Consultar docente\n3. Consultar curso\n\nDigita una opción: "))
 
-        #Eliminaciones
+        #Actualización
         elif (opcion == 3):
-            exit(1)
-
-        #Salida
+            id = input('Ingrese el ID del objeto que desea actualizar (se puede obtener usando el módulo de consulta): ')
+            query
+            
+        #Eliminación
         elif (opcion == 4): 
+            id = input('Ingrese el ID del objeto que desea eliminar (se puede obtener usando el módulo de consulta)')
+            query(3,'id','',id)
+        #Salida
+        elif (opcion == 5): 
             exit(1) #Sale con código de error 1, básicamente sin error
 
         else:

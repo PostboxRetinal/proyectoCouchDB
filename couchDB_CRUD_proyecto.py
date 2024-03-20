@@ -8,16 +8,21 @@ import subprocess,time,os,sys
 #CODIGOS DE ERROR
     #1 SIN ERROR
     #2 USU/PASS INVALIDA
+    #3 CONEXION RECHAZADA / SERVICIO NO DISPONIBLE
 
 #DATOS
 user = "testing" #USER
 pwd = "testing123*-" #PASS
 host = "127.0.0.1" #IP/LOCALHOST
 port = "5984" #PORT
-db_name = "cli_recommendation" #NOMBRE DOC BBDD
+db = "cli_recommendation" #NOMBRE DOC BBDD
 
 #CONEXION BBDD
-couch_server = couchdb.Server(f"http://{user}:{pwd}@{host}:{port}/")
+try:
+    couch_server = couchdb.Server(f"http://{user}:{pwd}@{host}:{port}/")
+except:
+    print(f'ERROR: No se puede conectar a {host}. Abortando')
+    exit(3)
 
 def detectarArquitectura():
     '''Se encarga de usar la libreria os para detectar que SO corre actualmente
@@ -49,19 +54,40 @@ def validar_guardado(doc_id):
     else:
         print(f"El documento con ID: {doc_id} no se ha guardado correctamente en la BBDD")
 
-def query(tipo,llave,valor):
-    '''Función encargada de hacer querys requeridos con ayuda de 3 parámetros y validar según se requiera'''
-    try:
-        documentoDisenno = f"_design/{tipo}"
-        nombreVista = f"por{llave}"
-        db[documentoDisenno]
+def query(tipoQuery, tipoFiltro, llave, valor):
+    '''Función encargada de hacer querys requeridos con ayuda de 4 parámetros y validar según se requiera'''
+    documentoDisenno = f"_design/{tipoFiltro}"
+    nombreVista = f"por{llave}"
+
+    if tipoQuery == 1:
+        #Consultar
         try:
-            resultados = db.view(f"{tipo}/{nombreVista}",key=valor)
+            db[documentoDisenno]
+            resultados = db.view(f"{tipoFiltro}/{nombreVista}",key=valor)
             return (row.value for row in resultados)
+        
         except couchdb.http.ResourceNotFound:
-            return(f'ERROR: La vista {resultados} no es válida, intenta con otro valor')
-    except couchdb.ResourceNotFound:
-        return(f'ERROR: Docuemnto no encontrado')
+            return(f'ERROR: La vista {documentoDisenno} no es válida, intenta con otro valor')
+        
+    elif tipoQuery == 2:
+        #Actualizar
+        # def Update(doc_id, data):
+        #     doc = db[doc_id]
+        #     doc.update(data)
+        #     db.save(doc)
+        try:
+            db[documentoDisenno]
+            resultados = db.view(f"{tipoFiltro}/{nombreVista}",key=valor)
+            linea = 1
+            for line in resultados:
+                datos = (f'{linea}. {line}')
+                linea += 1
+            return (datos)
+        
+        except couchdb.http.ResourceNotFound:
+            return(f'ERROR: La vista {documentoDisenno} no es válida, intenta con otro valor')
+    else:
+        return(f'ERROR GENERAL. Intena nuevamente')
     
 def menuQuery(tipo):
     '''Método para llamar los querys por tipo y evitar repetir el condicional multiples veces
@@ -91,7 +117,7 @@ def esperarUsuario():
     (none) -> (none)'''
     input('\nPresiona enter para continuar')
     
-def menuCreacionRol(opc):
+def creacionRol(opc):
     '''Función encargada de ejecutar según sea necesario la creación de objetos con ayuda de un argumento entero
     (int) -> none'''
     if opc == 1:
@@ -212,15 +238,15 @@ def menu(nombre_user,aarch):
         if (opcion == 1):
             opc1 = int(input('--ROLES DISPONIBLES-- \n\n1. Aprendiz\n2. Tutor\n3. Curso\n\n¿Qué tipo de rol deseas crear?:'))
             if opc1 == 1:
-                menuCreacionRol(1)
+                creacionRol(1)
                 pass
             
             elif opc1 == 2:
-                menuCreacionRol(2)
+                creacionRol(2)
                 pass
                 
             elif opc1 == 3:
-                menuCreacionRol(3)
+                creacionRol(3)
                 pass
 
             else:
@@ -298,102 +324,18 @@ def main(aarch):
 #EJECUCION
 if __name__ == '__main__':
     aarch = detectarArquitectura()
-    print(f"Estableciendo conexión con {host}:{port} ...")
     try:
         #Login
+        print(f"Estableciendo conexión con {host}:{port} ...")
         couch_server.login(user,pwd)
-        if (db_name in couch_server):
-            print(f'\nBBDD {db_name} encontrada')
-            db = couch_server[db_name]
+        if (db in couch_server):
+            print(f'\nBBDD {db} encontrada')
+            db = couch_server[db]
             main(aarch)
 
-    except couchdb.http.Unauthorized:
-        print(f'No se encontró la base de datos {db_name}, será creada')
-        print(f'ERROR: No puedes crear una BBDD como {user}. Actualiza las credenciales e intenta nuevamente')
-        #db = couch_server.create(db_name)
-        #main(aarch)
-        
-    except couchdb.Unauthorized:
-        print('Usuario o Clave Incorrectas. Intenta nuevamente')
+    except couchdb.HTTPError:
+        print(f'ERROR COUCHDB: Credenciales inválidas. Intenta nuevamente')
         exit(2)
-    
-    
-
-"""
-#(3) Update: Modificación de un res previamente consultado:
-doc_creado["fondos"] = 1000000.0
-db.save(doc_creado)
-print(doc_creado)
-
-#(4) Delete:Borrado de un res existente
-doc_borrar = db["2"]
-db.delete(doc_borrar)
-
-#funciones del crud
-def Create(collection, data):
-    doc_id, doc_rev = db.save(data)
-
-def Update(doc_id, data):
-    doc = db[doc_id]
-    doc.update(data)
-    db.save(doc)
-    
-def SelectAll(collection): #el selectall selecciona todos los registros
-    docs = [doc for doc in db.view(f"{collection}/all")]
-    
-def Select_By_Criteria(collection, criteria):
-    docs = [doc for doc in db.view(f"{collection}/by_criteria", key=criteria)]
-
-def Delete_Id(doc_id):
-    doc = db[doc_id]
-    db.delete(doc)
-
-def Delete_Value(key, value):
-    doc_id = db.get()
-    
-guitarra = {
-    "id":"G001",
-    "nombre":"Guitarra acustica base",
-    "categoria":"musica",
-    "descripcion":"Curso guitarra acustica basico",
-    "duracion":40,
-    "precio":120000.00,
-    "remoto":False
-}
-
-pintura1 = {
-    "id":"P001",
-    "nombre":"Pintura al oleo",
-    "categoria":"arte",
-    "descripcion":"Pintura en oleo",
-    "duracion":30,
-    "precio":130000.00,
-    "remoto":False
-}
-
-pintura2 = {
-    "id":"P002",
-    "nombre":"Pintura acrilica",
-    "categoria":"arte",
-    "descripcion":"Pintura acrilica",
-    "duracion":30,
-    "precio":130000.00,
-    "remoto":False
-}
-
-Create ("cursos", guitarra)
-Create ("cursos", pintura1)
-Create ("cursos", pintura2)
-
-#revisar update
-guitarra ["duracion"]=45
-Update (guitarra)
-
-lista_cursos = SelectAll("cursos")
-for c in lista_cursos:
-    print(c)
-    
-
-criterios = "arte"
-cursos_pintura = Select_By_Criteria("cursos", criterios)
-"""
+    except ConnectionRefusedError:
+        print(f'\nERROR: El host {host}:{port} no se encuentra disponible. ¿Está corriendo el servicio de couchDB?\n')
+        exit(3)
